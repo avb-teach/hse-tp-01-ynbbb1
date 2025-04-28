@@ -17,7 +17,10 @@ if [[ "${3-}" == "--max_depth" && "${4-}" =~ ^[0-9]+$ ]]; then
 fi
 # если в 3 и 4 аргументе написаны "max_depth" и его значение соответственно, то задаем это значение для MAX_DEPTH
 
-mkdir -p "$OUTPUT_DIR" # создаем папку. гарантируем, что будет выходная папка, куда будем копировать аргументы
+mkdir -p "$OUTPUT_DIR" 
+if [[ ! -d "$INPUT_DIR" ]]; then
+  exit 0
+fi
 
 find "$INPUT_DIR" -type f -print0 | while IFS= read -r -d '' src; do 
 # запускаем утилиту find, чтобы найти все файлы (-type f) внутри INPUT_DIR. -print0 выводит каждый найденный путь, заканчивая его нулевым байтом (\0) вместо перевода строки. Конвейер (|) передаёт этот “нулёво-разделённый” поток дальше в цикл while
@@ -36,7 +39,7 @@ find "$INPUT_DIR" -type f -print0 | while IFS= read -r -d '' src; do
   done
   # собираем подпуть из parts[start] .. parts[depth-2]
 
-  mkdir -p "$OUTPUT_DIR$subpath" # создаем папку. гарантируем, что будет выходная папка, куда будем копировать аргументы
+  mkdir -p "$OUTPUT_DIR$subpath" 
 
   fname="${parts[depth-1]}" # последний элемент массива parts — это имя файла
   newname="$fname"; cnt=0
